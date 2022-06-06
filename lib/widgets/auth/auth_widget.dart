@@ -4,13 +4,8 @@ import 'package:themoviedb/library/NotifierProvider.dart';
 import 'package:themoviedb/model/auth_model.dart';
 import 'package:themoviedb/widgets/main_screen/main_screen_widget.dart';
 
-
-
 class AuthWidget extends StatelessWidget {
-
   const AuthWidget({Key? key}) : super(key: key);
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,30 +39,34 @@ class _HeaderWidget extends StatelessWidget {
           'In order to use the editing and rating capabilities of TMDB, as well as get personal recommendations you will need to login to your account. If you do not have an account, registering for an account is free and simple. Click here to get started.',
           style: textStyle,
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         TextButton(
-          style: AppButtonStyle.linkButtonStyle,
-            onPressed: (){}, child: Text('Register')),
+            style: AppButtonStyle.linkButtonStyle,
+            onPressed: () {},
+            child: Text('Register')),
         Text(
           'If you signed up but didnt get your verification email, click here to have it resent',
           style: textStyle,
         ),
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         TextButton(
-          style: AppButtonStyle.linkButtonStyle,
-            onPressed: (){}, child: Text('Verify email')),
+            style: AppButtonStyle.linkButtonStyle,
+            onPressed: () {},
+            child: Text('Verify email')),
       ],
     );
   }
 }
 
 class _FormWidget extends StatelessWidget {
-
-
   const _FormWidget({Key? key}) : super(key: key);
 
-
-  final TextStyle textStyle =  const TextStyle(fontSize: 16, color: Color(0xFF212529));
+  final TextStyle textStyle =
+      const TextStyle(fontSize: 16, color: Color(0xFF212529));
 
   final InputDecoration textFieldDecoration = const InputDecoration(
     border: OutlineInputBorder(),
@@ -77,20 +76,17 @@ class _FormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final model=NotifierProvider.read<AuthModel>(context);
+    final model = NotifierProvider.read<AuthModel>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const ErrorMessageWidget(),
-
         Text(
           'UserName',
           style: textStyle,
         ),
         TextField(
-
           decoration: textFieldDecoration,
           controller: model?.loginTextController,
         ),
@@ -99,7 +95,6 @@ class _FormWidget extends StatelessWidget {
         ),
         Text(
           'Password',
-
           style: textStyle,
         ),
         TextField(
@@ -107,11 +102,15 @@ class _FormWidget extends StatelessWidget {
           controller: model?.passwordTextController,
           obscureText: true,
         ),
-        SizedBox(height: 30,),
+        SizedBox(
+          height: 30,
+        ),
         Row(
           children: [
             _AuthButtonWidget(),
-            SizedBox(width: 30,),
+            SizedBox(
+              width: 30,
+            ),
             TextButton(
                 style: AppButtonStyle.linkButtonStyle,
                 onPressed: () {},
@@ -123,52 +122,55 @@ class _FormWidget extends StatelessWidget {
   }
 }
 
-
 class _AuthButtonWidget extends StatelessWidget {
   const _AuthButtonWidget({
     Key? key,
   }) : super(key: key);
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    final model=NotifierProvider.watch<AuthModel>(context);
-    final child=model?.isAuthProgress==true?SizedBox(width:15,height: 15,child: const CircularProgressIndicator(strokeWidth: 2,)):const Text('Login');
+    final model = NotifierProvider.watch<AuthModel>(context);
+    final child = model?.isAuthProgress == true
+        ? SizedBox(
+            width: 15,
+            height: 15,
+            child: const CircularProgressIndicator(
+              strokeWidth: 2,
+            ))
+        : const Text('Login');
 
     return TextButton(
         style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(AppButtonStyle.frameColor),
+            backgroundColor:
+                MaterialStateProperty.all(AppButtonStyle.frameColor),
             foregroundColor: MaterialStateProperty.all(Colors.white),
             textStyle: MaterialStateProperty.all(
                 TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700)),
             padding: MaterialStateProperty.all(
               EdgeInsets.symmetric(vertical: 15.0, horizontal: 8.0),
             )),
-        onPressed:()=>model?.canStartAuth==true?model?.auth(context):null,
-        child: child
-    );
+        onPressed: () =>
+            model?.canStartAuth == true ? model?.auth(context) : null,
+        child: child);
   }
 }
-
 
 class ErrorMessageWidget extends StatelessWidget {
   const ErrorMessageWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final errorMessage=NotifierProvider.watch<AuthModel>(context)?.errorMessage;
-    if(errorMessage==null){
+    final errorMessage =
+        NotifierProvider.watch<AuthModel>(context)?.errorMessage;
+    if (errorMessage == null) {
       return const SizedBox.shrink();
     }
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: Text(errorMessage,style: TextStyle(color:Colors.red,fontSize: 17.0),),
+      child: Text(
+        errorMessage,
+        style: TextStyle(color: Colors.red, fontSize: 17.0),
+      ),
     );
   }
 }
-
-
-
-

@@ -6,55 +6,49 @@ import 'package:themoviedb/model/movie_list_model.dart';
 
 import '../movie_list/movie_list_widget.dart';
 
-
 class MainScreenWidget extends StatefulWidget {
-
-
   @override
   _MainScreenWidgetState createState() => _MainScreenWidgetState();
 }
 
 class _MainScreenWidgetState extends State<MainScreenWidget> {
-  int _selectedTab=1;
-
-  final MovieListModel movieListModel=MovieListModel();
-
+  int _selectedTab = 1;
+  final MovieListModel movieListModel = MovieListModel();
 
   @override
   void initState() {
     super.initState();
-
-
   }
 
-
   @override
-  void didChangeDependencies()
-  {
+  void didChangeDependencies() {
     super.didChangeDependencies();
     movieListModel.setupLocale(context);
     movieListModel.loadNextPage();
   }
 
-  void onSelectedTab(int index){
-    if(_selectedTab==index){
+  void onSelectedTab(int index) {
+    if (_selectedTab == index) {
       return;
     }
     setState(() {
-      _selectedTab=index;
+      _selectedTab = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    MainScreenModel? model=NotifierProvider.read<MainScreenModel>(context);
+    MainScreenModel? model = NotifierProvider.read<MainScreenModel>(context);
     print(model);
     return Scaffold(
       appBar: AppBar(
         title: Text('IMDB'),
         actions: [
-          IconButton(onPressed: (){
-            SessionDataProvider().setSessionId(null);
-          }, icon: const Icon(Icons.search))
+          IconButton(
+              onPressed: () {
+                SessionDataProvider().setSessionId(null);
+              },
+              icon: const Icon(Icons.search))
         ],
       ),
       body: IndexedStack(
@@ -62,28 +56,20 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
         children: [
           Text('News'),
           NotifierProvider(
-              create: ()=>movieListModel,isManagingModel: false
-              ,child: MovieListWidget()),
+              create: () => movieListModel,
+              isManagingModel: false,
+              child: MovieListWidget()),
           Text('TV-show'),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedTab,
         items: [
-          BottomNavigationBarItem(icon: Icon(
-            Icons.fiber_new_sharp
-          ),
-          label: 'News'),
-          BottomNavigationBarItem(icon: Icon(
-            Icons.movie_filter
-          ),
-            label: 'Movies'
-          ),
-          BottomNavigationBarItem(icon: Icon(
-              Icons.tv
-          ),
-              label: 'TV-show'
-          )
+          BottomNavigationBarItem(
+              icon: Icon(Icons.fiber_new_sharp), label: 'News'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.movie_filter), label: 'Movies'),
+          BottomNavigationBarItem(icon: Icon(Icons.tv), label: 'TV-show')
         ],
         onTap: onSelectedTab,
       ),

@@ -1,19 +1,22 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'movie_detail_video.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake,explicitToJson: true)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class MovieDetailVideo {
   final List<MovieDetailVideoResult> results;
+
   MovieDetailVideo({
     required this.results,
   });
 
-  factory MovieDetailVideo.fromJson(Map<String,dynamic>json)=>_$MovieDetailVideoFromJson(json);
-  Map<String,dynamic> toJson()=>_$MovieDetailVideoToJson(this);
+  factory MovieDetailVideo.fromJson(Map<String, dynamic> json) =>
+      _$MovieDetailVideoFromJson(json);
 
+  Map<String, dynamic> toJson() => _$MovieDetailVideoToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake,explicitToJson: true)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class MovieDetailVideoResult {
   @JsonKey(name: 'iso_639_1')
   final String iso6391;
@@ -27,6 +30,7 @@ class MovieDetailVideoResult {
   final bool official;
 
   final String id;
+
   MovieDetailVideoResult({
     required this.iso6391,
     required this.iso31661,
@@ -38,6 +42,9 @@ class MovieDetailVideoResult {
     required this.official,
     required this.id,
   });
-  factory MovieDetailVideoResult.fromJson(Map<String,dynamic>json)=>_$MovieDetailVideoResultFromJson(json);
-  Map<String,dynamic> toJson()=>_$MovieDetailVideoResultToJson(this);
+
+  factory MovieDetailVideoResult.fromJson(Map<String, dynamic> json) =>
+      _$MovieDetailVideoResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MovieDetailVideoResultToJson(this);
 }

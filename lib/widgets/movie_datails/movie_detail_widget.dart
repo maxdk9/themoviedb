@@ -6,8 +6,6 @@ import 'package:themoviedb/widgets/movie_datails/movie_datail_info_widget.dart';
 import 'package:themoviedb/widgets/movie_datails/movie_detail_cast_widget.dart';
 
 class MovieDetailWidget extends StatefulWidget {
-
-
   const MovieDetailWidget({Key? key}) : super(key: key);
 
   @override
@@ -15,21 +13,14 @@ class MovieDetailWidget extends StatefulWidget {
 }
 
 class _MovieDetailWidgetState extends State<MovieDetailWidget> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: _TitleWidget(),
       ),
       body: const ColoredBox(
-        color: Color.fromRGBO(24,23, 27, 1.0),
-        child:  _BodyWidget()
-      ),
+          color: Color.fromRGBO(24, 23, 27, 1.0), child: _BodyWidget()),
     );
   }
 
@@ -41,10 +32,10 @@ class _MovieDetailWidgetState extends State<MovieDetailWidget> {
 
   @override
   void initState() {
-       super.initState();
-       final model=NotifierProvider.read<MovieDetailsModel>(context);
-       final appModel=Provider.read<MyAppModel>(context);
-       model?.onSessionExpired=()=>appModel?.resetSession(context);
+    super.initState();
+    final model = NotifierProvider.read<MovieDetailsModel>(context);
+    final appModel = Provider.read<MyAppModel>(context);
+    model?.onSessionExpired = () => appModel?.resetSession(context);
   }
 }
 
@@ -53,9 +44,9 @@ class _TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model=NotifierProvider.watch<MovieDetailsModel>(context);
+    final model = NotifierProvider.watch<MovieDetailsModel>(context);
 
-    return Text(model?.movieDetails?.title??'Loading');
+    return Text(model?.movieDetails?.title ?? 'Loading');
   }
 }
 
@@ -64,23 +55,22 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model=NotifierProvider.watch<MovieDetailsModel>(context);
-    final movieDetails=model?.movieDetails;
-    if(movieDetails==null)
-      {
-        return const Center(child: CircularProgressIndicator(),);
-      }
-    else{
+    final model = NotifierProvider.watch<MovieDetailsModel>(context);
+    final movieDetails = model?.movieDetails;
+    if (movieDetails == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
       return ListView(
         children: [
           MovieDetailsInfoWidget(),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           MovieDetailCastWidget(),
         ],
       );
     }
-
   }
 }
-
-
