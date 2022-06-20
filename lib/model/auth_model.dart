@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:themoviedb/domain/api_client/api_client.dart';
-import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
+import 'package:themoviedb/domain/api_client/api_client_exception.dart';
+import 'package:themoviedb/domain/services/auth_service.dart';
 import 'package:themoviedb/navigation/main_navigation.dart';
 
-class AuthModel extends ChangeNotifier {
-  final ApiClient _apiClient = ApiClient();
+class AuthViewModel extends ChangeNotifier {
+  final AuthService _authService = AuthService();
   final loginTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   String? _errorMessage = '';
@@ -19,60 +19,61 @@ class AuthModel extends ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
-  final SessionDataProvider _sessionDataProvider = SessionDataProvider();
-
-  AuthModel() {
+  AuthViewModel() {
     loginTextController.text = 'maxdk9';
     passwordTextController.text = 'dinamo99';
+  }
+
+  bool isValid(String login, String password) =>
+      login.isNotEmpty && password.isNotEmpty;
+
+  Future<String?> _login(String login, String password) async {
+    try {
+      await _authService.login(login, password);
+    } on ApiClientException catch (e) {
+      switch (e.type) {
+        case ApiClientExceptionType.network:
+          return 'Server not available';
+        case ApiClientExceptionType.auth:
+          return 'Wrong login or password';
+        case ApiClientExceptionType.other:
+          return 'Server busy, wait and try later';
+        default:
+          return 'Unimplemented error';
+      }
+    } catch (e) {
+      return 'Unimplemented error';
+    }
+    return null;
   }
 
   Future<void> auth(BuildContext context) async {
     final login = loginTextController.text;
     final password = passwordTextController.text;
-    if (login.isEmpty || password.isEmpty) {
-      _errorMessage = 'Fill login and password';
-      notifyListeners();
-      return;
-    }
-    _errorMessage = null;
-    _isAuthProgress = true;
-    notifyListeners();
-    String? sessionId;
-    int? accountId;
-    try {
-      sessionId = await _apiClient.auth(username: login, password: password);
-      accountId = await _apiClient.getAccountInfo(sessionId);
-    } on ApiClientException catch (e) {
-      switch (e.type) {
-        case ApiClientExceptionType.network:
-          _errorMessage = 'Server not available';
-          break;
-        case ApiClientExceptionType.auth:
-          _errorMessage = 'Wrong login or password';
-          break;
-        case ApiClientExceptionType.other:
-          _errorMessage = 'Server busy, wait and try later';
-          break;
-      }
-    } catch (e) {
-      _errorMessage = 'Unimplemented error';
-    }
-    _isAuthProgress = false;
-    if (_errorMessage != null) {
-      notifyListeners();
-      return;
-    }
 
-    if (sessionId == null || accountId == null) {
-      _errorMessage = 'Undefined error please retry later';
-      notifyListeners();
+    if (!isValid(login, password)) {
+      _updateStatus('Fill login and password', false);
+      return;
+    }
+    _updateStatus(null, true);
+    _errorMessage = await _login(login, password);
+
+    if (_errorMessage != null) {
+      _updateStatus(_errorMessage, false);
       return;
     } else {
-      _sessionDataProvider.setSessionId(sessionId);
-      _sessionDataProvider.setAccountId(accountId);
-      unawaited(Navigator.of(context)
-          .pushReplacementNamed(MainNavigationRouteNames.mainScreen));
+      //_updateStatus(_errorMessage, true);
+      MainNavigation.resetNavigation(context);
     }
+  }
+
+  void _updateStatus(String? errorMessage, bool isAuthProgress) {
+    if (_errorMessage == errorMessage && _isAuthProgress == isAuthProgress) {
+      return;
+    }
+    _errorMessage = errorMessage;
+    _isAuthProgress = isAuthProgress;
+    notifyListeners();
   }
 }
 

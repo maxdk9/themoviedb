@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:themoviedb/configuration/configuration.dart';
-import 'package:themoviedb/domain/api_client/api_client.dart';
 import 'package:themoviedb/domain/api_client/api_client_exception.dart';
 
 class NetworkClient {
   final _client = HttpClient();
 
   Uri makeUri(String path, [Map<String, dynamic>? parameters]) {
-    final uri = Uri.parse('$Configuration.host$path');
+    final uri = Uri.parse('${Configuration.host}$path');
     if (parameters != null) {
       return uri.replace(queryParameters: parameters);
     }
@@ -38,7 +37,6 @@ class NetworkClient {
       throw ApiClientException(ApiClientExceptionType.other);
     }
   }
-
 
   Future<T> post<T>(
     String path,
@@ -70,7 +68,6 @@ class NetworkClient {
     }
   }
 
-
   void validateResponse(HttpClientResponse response, dynamic json) {
     if (response.statusCode == 401) {
       final status = json['status_code'];
@@ -85,7 +82,6 @@ class NetworkClient {
     }
   }
 }
-
 
 extension HtttpClientResponseJsonDecode on HttpClientResponse {
   Future<dynamic> jsonDecode() async {

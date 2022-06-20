@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:themoviedb/domain/api_client/api_client.dart';
+import 'package:themoviedb/domain/api_client/image_downloader.dart';
 import 'package:themoviedb/domain/entity/movie_detail_credits.dart';
 import 'package:themoviedb/library/NotifierProvider.dart';
 import 'package:themoviedb/model/movie_detalis_model.dart';
 import 'package:themoviedb/navigation/main_navigation.dart';
-import 'package:themoviedb/resources/resources.dart';
 import 'package:themoviedb/widgets/tools/radial_percent_widget.dart';
 
 class MovieDetailsInfoWidget extends StatelessWidget {
@@ -12,28 +11,27 @@ class MovieDetailsInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MovieDetailsModel>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children:  [
         _TopPosterWidget(),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
+         Padding(
+          padding: EdgeInsets.all(15.0),
           child: _MovieNameWidget(),
         ),
-        const _ScoreWidget(),
-        const _SummaryWidget(),
-        const Padding(
-          padding: const EdgeInsets.all(10.0),
+        _ScoreWidget(),
+        _SummaryWidget(),
+        Padding(
+          padding: EdgeInsets.all(10.0),
           child: _OverviewWidget(),
         ),
-        const Padding(
-          padding: const EdgeInsets.all(10.0),
+        Padding(
+          padding: EdgeInsets.all(10.0),
           child: _DescriptionWidget(),
         ),
-        const Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: PeopleWidget(),
         ),
       ],
@@ -61,7 +59,7 @@ class _OverviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Overview',
+    return const Text('Overview',
         style: TextStyle(
             color: Colors.white, fontSize: 16, fontWeight: FontWeight.w400));
   }
@@ -86,7 +84,7 @@ class _MovieNameWidget extends StatelessWidget {
                     fontSize: 20.85, fontWeight: FontWeight.w600)),
             TextSpan(
                 text: ' $year',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400))
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400))
           ])),
     );
   }
@@ -157,14 +155,14 @@ class _TopPosterWidget extends StatelessWidget {
       aspectRatio: 390 / 219,
       child: Stack(children: [
         backdropPath != null
-            ? Image.network(ApiClient.imageUrl(backdropPath))
+            ? Image.network(ImageDownloader.imageUrl(backdropPath))
             : SizedBox.shrink(),
         Positioned(
             left: 20,
             top: 20,
             bottom: 20,
             child: posterPath != null
-                ? Image.network(ApiClient.imageUrl(posterPath))
+                ? Image.network(ImageDownloader.imageUrl(posterPath))
                 : SizedBox.shrink()),
         Positioned(
           top: 10,

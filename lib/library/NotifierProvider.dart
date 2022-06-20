@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 
 
+
+import 'package:flutter/material.dart';
 
 class NotifierProvider<Model extends ChangeNotifier> extends StatefulWidget {
   final Widget child;

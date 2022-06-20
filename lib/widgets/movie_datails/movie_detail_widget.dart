@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:themoviedb/library/NotifierProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:themoviedb/model/movie_detalis_model.dart';
 import 'package:themoviedb/model/my_app_model.dart';
 import 'package:themoviedb/widgets/movie_datails/movie_datail_info_widget.dart';
@@ -27,15 +27,15 @@ class _MovieDetailWidgetState extends State<MovieDetailWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    NotifierProvider.read<MovieDetailsModel>(context)?.setupLocale(context);
+    context.read<MovieDetailsModel>().setupLocale(context);
   }
 
   @override
   void initState() {
     super.initState();
-    final model = NotifierProvider.read<MovieDetailsModel>(context);
-    final appModel = Provider.read<MyAppModel>(context);
-    model?.onSessionExpired = () => appModel?.resetSession(context);
+    final model = context.read<MovieDetailsModel>();
+    final appModel = context.read<MyAppModel>();
+    model.onSessionExpired = () => appModel.resetSession(context);
   }
 }
 
@@ -44,9 +44,9 @@ class _TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MovieDetailsModel>(context);
+    final model = context.watch<MovieDetailsModel>();
 
-    return Text(model?.movieDetails?.title ?? 'Loading');
+    return Text(model.movieDetails?.title ?? 'Loading');
   }
 }
 
@@ -55,15 +55,15 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MovieDetailsModel>(context);
-    final movieDetails = model?.movieDetails;
+    final model = context.watch<MovieDetailsModel>();
+    final movieDetails = model.movieDetails;
     if (movieDetails == null) {
-      return const Center(
+      return  Center(
         child: CircularProgressIndicator(),
       );
     } else {
       return ListView(
-        children: [
+        children:  [
           MovieDetailsInfoWidget(),
           SizedBox(
             height: 20,

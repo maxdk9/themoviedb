@@ -3,7 +3,8 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MovieTrailerWidget extends StatefulWidget {
   final String youtubeKey;
-  const MovieTrailerWidget({Key? key,required this.youtubeKey}) : super(key: key);
+  const MovieTrailerWidget({Key? key, required this.youtubeKey})
+      : super(key: key);
 
   @override
   _MovieTrailerWidgetState createState() => _MovieTrailerWidgetState();
@@ -12,9 +13,9 @@ class MovieTrailerWidget extends StatefulWidget {
 class _MovieTrailerWidgetState extends State<MovieTrailerWidget> {
   late YoutubePlayerController _controller;
 
-
   @override
   void initState() {
+    super.initState();
     _controller = YoutubePlayerController(
       initialVideoId: widget.youtubeKey,
       flags: const YoutubePlayerFlags(
@@ -24,11 +25,10 @@ class _MovieTrailerWidgetState extends State<MovieTrailerWidget> {
         loop: false,
         isLive: false,
         forceHD: false,
-
         enableCaption: true,
       ),
     );
-      //..addListener(listener);
+    //..addListener(listener);
   }
 
   @override
@@ -37,15 +37,17 @@ class _MovieTrailerWidgetState extends State<MovieTrailerWidget> {
       player: YoutubePlayer(
         controller: _controller,
         showVideoProgressIndicator: true,
-      ), builder: (context , player ) {
-      return
-          Scaffold(
-            appBar: AppBar(title: Text('Trailer'),),
-            body: Center(
-              child: player,
-            ),
-          );
-    },
+      ),
+      builder: (context, player) {
+        return Scaffold(
+          appBar: AppBar(
+            title:const Text('Trailer'),
+          ),
+          body: Center(
+            child: player,
+          ),
+        );
+      },
     );
   }
 }

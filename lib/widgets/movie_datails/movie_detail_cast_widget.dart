@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:themoviedb/domain/api_client/api_client.dart';
+import 'package:themoviedb/domain/api_client/image_downloader.dart';
 import 'package:themoviedb/domain/entity/movie_detail_credits.dart';
 import '../../library/NotifierProvider.dart';
 import '../../model/movie_detalis_model.dart';
@@ -28,7 +28,7 @@ class MovieDetailCastWidget extends StatelessWidget {
             padding: const EdgeInsets.all(3.0),
             child: TextButton(
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   'Full Cast & Crew',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 )),
@@ -50,8 +50,9 @@ class _ActorListWidget extends StatelessWidget {
     var cast = model?.movieDetails?.credits.cast;
     if (cast == null || cast.isEmpty) return SizedBox.shrink();
 
+    
     return ListView.builder(
-        itemCount: 20,
+        itemCount: cast.length,
         itemExtent: 120,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
@@ -81,25 +82,26 @@ class _ActorListItemWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: Colors.black.withOpacity(0.2)),
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           boxShadow: [
             BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
+                // ignore: prefer_const_constructors
                 offset: Offset(0, 5))
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           clipBehavior: Clip.hardEdge,
           child: Column(
             children: [
               profilePath != null
                   ? Image.network(
-                      ApiClient.imageUrl(profilePath),
+                      ImageDownloader.imageUrl(profilePath),
                       fit: BoxFit.contain,
                     )
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
               // Padding(
               //   padding: const EdgeInsets.all(8.0),
               //   child:
@@ -115,12 +117,12 @@ class _ActorListItemWidget extends StatelessWidget {
                             fontWeight: FontWeight.w700, fontSize: 12),
                         maxLines: 1,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
                         actor.character,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 10),
                         maxLines: 2,
                       ),

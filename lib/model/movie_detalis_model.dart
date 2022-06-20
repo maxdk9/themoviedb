@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:themoviedb/domain/api_client/account_api_client.dart';
 import 'package:themoviedb/domain/api_client/api_client.dart';
 import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
 import 'package:themoviedb/domain/entity/movie_details.dart';
 
+import '../domain/api_client/api_client_exception.dart';
+
 class MovieDetailsModel extends ChangeNotifier {
-  final _apiClient = ApiClient();
+  final _apiClient = MovieApiClient();
+  final _accountApiClient = AccountApiClient();
   final _sessionDataProvider = SessionDataProvider();
 
   final int moveId;
@@ -41,11 +45,11 @@ class MovieDetailsModel extends ChangeNotifier {
       _isFavorite = newfavorite;
       notifyListeners();
       try {
-        await _apiClient.markAsFavorite(
+        await _accountApiClient.markAsFavorite(
             accountId: accountId,
             sessionId: sessionId,
-            mediaType: MediaType.Movie,
-            mediaId: this.moveId,
+            mediaType: MediaType.movie,
+            mediaId: moveId,
             favorite: newfavorite);
       } on ApiClientException catch (e) {
         _handleApiClientException(e);
@@ -62,7 +66,7 @@ class MovieDetailsModel extends ChangeNotifier {
         notifyListeners();
       }
     } on ApiClientException catch (e) {
-     _handleApiClientException(e);
+      _handleApiClientException(e);
     }
   }
 

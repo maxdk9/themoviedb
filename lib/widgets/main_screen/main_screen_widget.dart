@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
+import 'package:themoviedb/domain/factory/screen_factory.dart';
 import 'package:themoviedb/library/NotifierProvider.dart';
 import 'package:themoviedb/model/main_screen_model.dart';
-import 'package:themoviedb/model/movie_list_model.dart';
-
-import '../movie_list/movie_list_widget.dart';
 
 class MainScreenWidget extends StatefulWidget {
   @override
@@ -13,19 +11,15 @@ class MainScreenWidget extends StatefulWidget {
 
 class _MainScreenWidgetState extends State<MainScreenWidget> {
   int _selectedTab = 1;
-  final MovieListModel movieListModel = MovieListModel();
+
+  final _screenFactory = ScreenFactory();
 
   @override
   void initState() {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    movieListModel.setupLocale(context);
-    movieListModel.loadNextPage();
-  }
+  
 
   void onSelectedTab(int index) {
     if (_selectedTab == index) {
@@ -42,7 +36,7 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
     print(model);
     return Scaffold(
       appBar: AppBar(
-        title: Text('IMDB'),
+        title: const Text('IMDB'),
         actions: [
           IconButton(
               onPressed: () {
@@ -54,25 +48,44 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
       body: IndexedStack(
         index: _selectedTab,
         children: [
-          Text('News'),
-          NotifierProvider(
-              create: () => movieListModel,
-              isManagingModel: false,
-              child: MovieListWidget()),
-          Text('TV-show'),
+          _screenFactory.makeNewsList(),
+          _screenFactory.makeMovieList(),
+          _screenFactory.makeTVShowWidget(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedTab,
-        items: [
-          BottomNavigationBarItem(
+        items: const [
+           BottomNavigationBarItem(
               icon: Icon(Icons.fiber_new_sharp), label: 'News'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.movie_filter), label: 'Movies'),
-          BottomNavigationBarItem(icon: Icon(Icons.tv), label: 'TV-show')
+           BottomNavigationBarItem(
+              icon:  Icon(Icons.movie_filter), label: 'Movies'),
+          BottomNavigationBarItem(icon:  Icon(Icons.tv), label: 'TV-show')
         ],
         onTap: onSelectedTab,
       ),
     );
+  }
+}
+
+class TVshowWidget extends StatelessWidget {
+  const TVshowWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('TV-show');
+  }
+}
+
+class NewsWidget extends StatelessWidget {
+  const NewsWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('News');
   }
 }
