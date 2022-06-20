@@ -39,12 +39,12 @@ class Paginator<T> {
       _data.addAll(result.data);
       _currentPage = result.currentPage;
       _totalPage = result.totalPage;
-      this._isLoadingInProgress = false;
+      _isLoadingInProgress = false;
 
       // _data.addAll(
       //     result.movies.map((movie) => makeRowData(movie)).toList());
     } catch (e) {
-      this._isLoadingInProgress = false;
+      _isLoadingInProgress = false;
     }
   }
 

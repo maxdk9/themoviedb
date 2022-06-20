@@ -8,7 +8,7 @@ class LoaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // ignore: prefer_const_constructors
     return Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: const Center(child: CircularProgressIndicator()),
     );
   }
 

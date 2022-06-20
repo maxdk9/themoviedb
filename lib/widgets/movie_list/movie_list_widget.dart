@@ -23,7 +23,7 @@ class _MovieListWidgetState extends State<MovieListWidget> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      children:  [_MovieListWidget(), _SearchWidget()],
+      children: const [_MovieListWidget(), _SearchWidget()],
     );
   }
 }
@@ -95,7 +95,7 @@ class _MovieListRowWidget extends StatelessWidget {
                 BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
-                    offset: Offset(0, 5))
+                    offset:const Offset(0, 5))
               ],
             ),
             clipBehavior: Clip.hardEdge,

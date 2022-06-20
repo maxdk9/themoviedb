@@ -8,7 +8,7 @@ class AuthWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build auth widget');
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login to your account'),
@@ -16,7 +16,7 @@ class AuthWidget extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          children: [_FormWidget(), _HeaderWidget()],
+          children: [const _FormWidget(), _HeaderWidget()],
         ),
       ),
     );
@@ -38,7 +38,7 @@ class _HeaderWidget extends StatelessWidget {
           'In order to use the editing and rating capabilities of TMDB, as well as get personal recommendations you will need to login to your account. If you do not have an account, registering for an account is free and simple. Click here to get started.',
           style: textStyle,
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         TextButton(
@@ -106,7 +106,7 @@ class _FormWidget extends StatelessWidget {
         ),
         Row(
           children: [
-            _AuthButtonWidget(),
+            const _AuthButtonWidget(),
             const SizedBox(
               width: 30,
             ),
@@ -133,7 +133,7 @@ class _AuthButtonWidget extends StatelessWidget {
         ? const SizedBox(
             width: 15,
             height: 15,
-            child: const CircularProgressIndicator(
+            child:  CircularProgressIndicator(
               strokeWidth: 2,
             ))
         : const Text('Login');

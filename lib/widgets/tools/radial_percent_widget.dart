@@ -65,7 +65,7 @@ class MyPainter extends CustomPainter {
 
   void drawFreeArc(Canvas canvas, Rect arcRect) {
     final paint = Paint();
-    paint.color = this.freeColor;
+    paint.color = freeColor;
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = lineWidth;
     paint.strokeCap = StrokeCap.round;

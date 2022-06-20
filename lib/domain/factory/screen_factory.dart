@@ -32,7 +32,7 @@ class ScreenFactory {
   Widget makeMovieDetailsWidget(int movieId) {
     return ChangeNotifierProvider(
         create: (_) => MovieDetailsModel(moveId: movieId),
-        child:  MovieDetailWidget());
+        child: const MovieDetailWidget());
   }
 
   Widget makeMovieTrailerWidget(String youtubeKey) {

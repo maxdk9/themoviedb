@@ -2,8 +2,6 @@ import 'package:themoviedb/domain/api_client/network_client.dart';
 
 import '../../configuration/configuration.dart';
 
-
-
 enum MediaType {
   movie,
   tv,
@@ -20,15 +18,16 @@ extension MediaTypeAsString on MediaType {
   }
 }
 
-class AccountApiClient{
-  final _networkClient=NetworkClient();
+class AccountApiClient {
+  final _networkClient = NetworkClient();
 
   Future<int> getAccountInfo(String sessionId) async {
-    parser (dynamic json) {
+    parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
       final result = jsonMap['id'] as int;
       return result;
     }
+
     final result = await _networkClient.get('/account', parser,
         {'api_key': Configuration.apiKey, 'session_id': sessionId});
     return result;
@@ -43,16 +42,18 @@ class AccountApiClient{
     parser(dynamic json) {
       return 1;
     }
+
     final bodyparameters = <String, dynamic>{
       'media_type': mediaType.asString(),
       'media_id': mediaId.toString(),
       'favorite': favorite
     };
-    final result = await _networkClient.post(
-        '/account/$accountId/favorite',
-        parser,
-        bodyparameters,
-        {'api_key': Configuration.apiKey, 'session_id': sessionId.toString()});
+    final result = await _networkClient
+        .post('/account/$accountId/favorite', parser, bodyparameters, {
+      'api_key': Configuration.apiKey,
+      'session_id': sessionId.toString()
+      //'session_id': sessionId.toString()
+    });
     return result;
   }
 }

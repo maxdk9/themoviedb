@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:themoviedb/model/movie_detalis_model.dart';
-import 'package:themoviedb/model/my_app_model.dart';
 import 'package:themoviedb/widgets/movie_datails/movie_datail_info_widget.dart';
 import 'package:themoviedb/widgets/movie_datails/movie_detail_cast_widget.dart';
 
@@ -17,7 +16,7 @@ class _MovieDetailWidgetState extends State<MovieDetailWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _TitleWidget(),
+        title: const _TitleWidget(),
       ),
       body: const ColoredBox(
           color: Color.fromRGBO(24, 23, 27, 1.0), child: _BodyWidget()),
@@ -27,15 +26,8 @@ class _MovieDetailWidgetState extends State<MovieDetailWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.read<MovieDetailsModel>().setupLocale(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final model = context.read<MovieDetailsModel>();
-    final appModel = context.read<MyAppModel>();
-    model.onSessionExpired = () => appModel.resetSession(context);
+    Future.microtask(
+        () => context.read<MovieDetailsModel>().setupLocale(context));
   }
 }
 
@@ -44,9 +36,10 @@ class _TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<MovieDetailsModel>();
+    final title = context.select((MovieDetailsModel model) => model.data.title);
+    //final model = context.watch<MovieDetailsModel>();
 
-    return Text(model.movieDetails?.title ?? 'Loading');
+    return Text(title);
   }
 }
 
@@ -55,15 +48,15 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<MovieDetailsModel>();
-    final movieDetails = model.movieDetails;
-    if (movieDetails == null) {
-      return  Center(
+    final isLoading =
+        context.select((MovieDetailsModel model) => model.data.isLoading);
+    if (isLoading) {
+      return const Center(
         child: CircularProgressIndicator(),
       );
     } else {
       return ListView(
-        children:  [
+        children: const [
           MovieDetailsInfoWidget(),
           SizedBox(
             height: 20,

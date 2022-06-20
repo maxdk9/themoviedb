@@ -22,7 +22,7 @@ class MainNavigation {
   };
 
   Route<Object> onGenerateroute(RouteSettings settings) {
-    print(settings.name);
+    
     switch (settings.name) {
       case MainNavigationRouteNames.movieDetails:
         final arguments = settings.arguments;

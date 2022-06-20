@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:themoviedb/domain/api_client/image_downloader.dart';
 import 'package:themoviedb/domain/entity/movie_detail_credits.dart';
 import '../../library/NotifierProvider.dart';
@@ -46,13 +47,13 @@ class _ActorListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<MovieDetailsModel>(context);
-    var cast = model?.movieDetails?.credits.cast;
-    if (cast == null || cast.isEmpty) return SizedBox.shrink();
+    var actorsData = context
+        .select((MovieDetailsModel model) => model.data.actorsData);
 
-    
+    if (actorsData.isEmpty) return const SizedBox.shrink();
+
     return ListView.builder(
-        itemCount: cast.length,
+        itemCount: actorsData.length,
         itemExtent: 120,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
@@ -71,10 +72,12 @@ class _ActorListItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<MovieDetailsModel>(context);
-    var cast = model?.movieDetails?.credits.cast;
-    Actor actor = cast![actorIndex];
-    var profilePath = actor.profilePath;
+    var actorsData = context
+        .select((MovieDetailsModel model) => model.data.actorsData);
+
+    
+    MovieDetailsMovieActorData actor = actorsData[actorIndex];
+    
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -96,9 +99,9 @@ class _ActorListItemWidget extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           child: Column(
             children: [
-              profilePath != null
+              actor.profilePath != null
                   ? Image.network(
-                      ImageDownloader.imageUrl(profilePath),
+                      ImageDownloader.imageUrl(actor.profilePath??''),
                       fit: BoxFit.contain,
                     )
                   : const SizedBox.shrink(),

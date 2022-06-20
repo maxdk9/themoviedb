@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
 import 'package:themoviedb/domain/factory/screen_factory.dart';
 import 'package:themoviedb/library/NotifierProvider.dart';
@@ -19,8 +20,6 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
     super.initState();
   }
 
-  
-
   void onSelectedTab(int index) {
     if (_selectedTab == index) {
       return;
@@ -32,15 +31,16 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
 
   @override
   Widget build(BuildContext context) {
-    MainScreenModel? model = NotifierProvider.read<MainScreenModel>(context);
-    print(model);
+    //MainScreenModel? model = context.read<MainScreenModel>();
+    //NotifierProvider.read<MainScreenModel>(context);
+    //print(model);
     return Scaffold(
       appBar: AppBar(
         title: const Text('IMDB'),
         actions: [
           IconButton(
               onPressed: () {
-                SessionDataProvider().setSessionId(null);
+                SessionDataProvider().deleteSessionId();
               },
               icon: const Icon(Icons.search))
         ],
@@ -56,11 +56,11 @@ class _MainScreenWidgetState extends State<MainScreenWidget> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedTab,
         items: const [
-           BottomNavigationBarItem(
+          BottomNavigationBarItem(
               icon: Icon(Icons.fiber_new_sharp), label: 'News'),
-           BottomNavigationBarItem(
-              icon:  Icon(Icons.movie_filter), label: 'Movies'),
-          BottomNavigationBarItem(icon:  Icon(Icons.tv), label: 'TV-show')
+          BottomNavigationBarItem(
+              icon: Icon(Icons.movie_filter), label: 'Movies'),
+          BottomNavigationBarItem(icon: Icon(Icons.tv), label: 'TV-show')
         ],
         onTap: onSelectedTab,
       ),
