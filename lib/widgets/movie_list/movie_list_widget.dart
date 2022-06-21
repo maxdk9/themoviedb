@@ -17,7 +17,8 @@ class _MovieListWidgetState extends State<MovieListWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.read<MovieListViewModel>().setupLocale(context);
+    final locale = Localizations.localeOf(context);
+    context.read<MovieListViewModel>().setupLocale(locale);
   }
 
   @override
@@ -95,7 +96,7 @@ class _MovieListRowWidget extends StatelessWidget {
                 BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 8,
-                    offset:const Offset(0, 5))
+                    offset: const Offset(0, 5))
               ],
             ),
             clipBehavior: Clip.hardEdge,

@@ -43,7 +43,6 @@ class MovieApiClient {
       'include_adult': true.toString(),
       'query': query,
     });
-    print('searchMovie $query');
 
     return result;
   }

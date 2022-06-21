@@ -4,7 +4,13 @@
             "name": "Flutter (release mode)",
             "program": "lib/main.dart",
             "request": "launch",
-            "type": "dart",
+            "type": "dart"
+        },
+        {
+            "name": "Flutter",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart"
         }
     ]
 }

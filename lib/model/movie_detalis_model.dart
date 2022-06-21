@@ -7,19 +7,37 @@ import 'package:themoviedb/domain/api_client/api_client.dart';
 import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
 import 'package:themoviedb/domain/entity/movie_details.dart';
 import 'package:themoviedb/domain/services/auth_service.dart';
+import 'package:themoviedb/domain/services/movie_service.dart';
+import 'package:themoviedb/library/localized_model.dart';
 
 import '../domain/api_client/api_client_exception.dart';
+import '../domain/entity_local/MovieDetailsLocal.dart';
 import '../navigation/main_navigation.dart';
 
 class MovieDetailPosterData {
   final String? backdropPath;
   final String? posterPath;
-  final Icon favoriteIcon;
+  final bool isFavorite;
+  Icon get favoriteIcon =>
+      Icon(isFavorite ? Icons.favorite : Icons.favorite_outline);
+
   MovieDetailPosterData({
     this.backdropPath,
     this.posterPath,
-    required this.favoriteIcon,
+    this.isFavorite = false,
   });
+
+  MovieDetailPosterData copyWith({
+    String? backdropPath,
+    String? posterPath,
+    bool? isFavorite,
+  }) {
+    return MovieDetailPosterData(
+      backdropPath: backdropPath ?? this.backdropPath,
+      posterPath: posterPath ?? this.posterPath,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 }
 
 class MovieDetailsMovieNameData {
@@ -64,8 +82,7 @@ class MovieDetailsData {
   String title = 'Loading';
   bool isLoading = true;
   String overview = '';
-  MovieDetailPosterData posterData =
-      MovieDetailPosterData(favoriteIcon: const Icon(Icons.favorite_outline));
+  MovieDetailPosterData posterData = MovieDetailPosterData();
   MovieDetailsMovieNameData nameData =
       MovieDetailsMovieNameData(name: '', year: '');
   MovieDetailsMovieScoreData scoreData =
@@ -76,67 +93,55 @@ class MovieDetailsData {
 }
 
 class MovieDetailsModel extends ChangeNotifier {
-  final _apiClient = MovieApiClient();
   final _accountApiClient = AccountApiClient();
-  final _sessionDataProvider = SessionDataProvider();
+
   final authService = AuthService();
+  final _movieService = MovieService();
 
   final int moveId;
   final data = MovieDetailsData();
-  String _locale = '';
-  bool _isFavorite = false;
-  MovieDetails? _movieDetails;
+  
+
   late DateFormat _dateFormat = DateFormat.yMMMM();
 
   MovieDetailsModel({required this.moveId});
 
-  MovieDetails? get movieDetails => _movieDetails;
-
-  bool get isFavorite => _isFavorite;
-
   Future<void>? Function()? onSessionExpired;
+  final LocalizedModelStorage _localeStorage = LocalizedModelStorage();
 
-  Future<void> setupLocale(BuildContext context) async {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    if (_locale == locale) {
-      return;
-    } else {
-      _dateFormat = DateFormat.yMMMM(locale);
-      _locale = locale;
-    }
+  Future<void> setupLocale(BuildContext context, Locale locale) async {
+    if (!_localeStorage.updateLocale(locale)) return;
+    _dateFormat = DateFormat.yMMMM(_localeStorage.localeTag);
+  
     updateData(null, false);
     await loadDetails(context);
   }
 
   Future<void> toggleFavorite(BuildContext context) async {
-    final sessionId = await _sessionDataProvider.getSessionId();
-    final accountId = await _sessionDataProvider.getAccountId();
-    final newfavorite = !_isFavorite;
-    if (sessionId != null && accountId != null) {
-      _isFavorite = newfavorite;
-      updateData(movieDetails, _isFavorite);
+    data.posterData =
+        data.posterData.copyWith(isFavorite: !data.posterData.isFavorite);
+    notifyListeners();
 
-      try {
-        await _accountApiClient.markAsFavorite(
-            accountId: accountId,
-            sessionId: sessionId,
-            mediaType: MediaType.movie,
-            mediaId: moveId,
-            favorite: newfavorite);
-      } on ApiClientException catch (e) {
-        _handleApiClientException(e, context);
-      }
+    try {
+      _movieService.updateFavorite(
+          moveId: moveId, isFavorite: data.posterData.isFavorite);
+      /* await _accountApiClient.markAsFavorite(
+          accountId: accountId,
+          sessionId: sessionId,
+          mediaType: MediaType.movie,
+          mediaId: moveId,
+          favorite: newfavorite); */
+    } on ApiClientException catch (e) {
+      _handleApiClientException(e, context);
     }
   }
 
   Future<void> loadDetails(BuildContext context) async {
     try {
-      _movieDetails = await _apiClient.movieDetails(moveId, _locale);
-      final sessionId = await _sessionDataProvider.getSessionId();
-      if (sessionId != null) {
-        _isFavorite = await _apiClient.isFavorite(this.moveId, sessionId);
-        updateData(movieDetails, _isFavorite);
-      }
+      final MovieDetailsLocal movieDetailsLocal =
+          await _movieService.loadDetails(movieId: moveId, locale: _localeStorage.localeTag);
+
+      updateData(movieDetailsLocal.movieDetails, movieDetailsLocal.isFavorite);
     } on ApiClientException catch (e) {
       _handleApiClientException(e, context);
     }
@@ -153,8 +158,7 @@ class MovieDetailsModel extends ChangeNotifier {
     data.posterData = MovieDetailPosterData(
         backdropPath: details.backdropPath,
         posterPath: details.posterPath,
-        favoriteIcon:
-            Icon(isFavorite ? Icons.favorite : Icons.favorite_outline));
+        isFavorite: isFavorite);
 
     var year = details.releaseDate?.year.toString();
     year = year != null ? ' $year' : '';
@@ -164,7 +168,7 @@ class MovieDetailsModel extends ChangeNotifier {
     voteAverage = voteAverage * 10;
     final videos = details.videos.results
         .where((video) => video.type == 'Trailer' && video.site == 'YouTube');
-    final trailerKey = videos?.isNotEmpty == true ? videos.first.key : null;
+    final trailerKey = videos.isNotEmpty == true ? videos.first.key : null;
 
     data.scoreData = MovieDetailsMovieScoreData(
         voteAverage: voteAverage, trailerKey: trailerKey);
@@ -173,16 +177,14 @@ class MovieDetailsModel extends ChangeNotifier {
     data.peopleData = makePeopleData(details);
 
     final cast = details.credits.cast;
-    if(cast!=null){
-        data.actorsData =cast
-        .map((act) => MovieDetailsMovieActorData(
-            name: act.name,
-            character: act.character,
-            profilePath: act.profilePath))
-        .toList();
+    if (cast != null) {
+      data.actorsData = cast
+          .map((act) => MovieDetailsMovieActorData(
+              name: act.name,
+              character: act.character,
+              profilePath: act.profilePath))
+          .toList();
     }
-
-    
 
     notifyListeners();
   }
