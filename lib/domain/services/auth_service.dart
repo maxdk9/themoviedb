@@ -1,11 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:themoviedb/domain/api_client/account_api_client.dart';
 import 'package:themoviedb/domain/api_client/auth_api_client.dart';
 import 'package:themoviedb/domain/data_providers/session_data_provider.dart';
 
+
 class AuthService {
   final _sessionDataProvider = SessionDataProvider();
   final AuthApiClient _authApiClient = AuthApiClient();
-  final AccountApiClient _accountApiClient =AccountApiClient();
+  final AccountApiClient _accountApiClient = AccountApiClient();
 
   Future<bool> isAuth() async {
     final sessionId = await _sessionDataProvider.getSessionId();
@@ -20,8 +24,9 @@ class AuthService {
     await _sessionDataProvider.setSessionId(sessionId);
     await _sessionDataProvider.setAccountId(accountId);
   }
-  Future<void> logout() async{
-      await _sessionDataProvider.deleteSessionId();
-      await _sessionDataProvider.deleteAccountId();  
+
+  Future<void> logout() async {
+    await _sessionDataProvider.deleteSessionId();
+    await _sessionDataProvider.deleteAccountId();
   }
 }
